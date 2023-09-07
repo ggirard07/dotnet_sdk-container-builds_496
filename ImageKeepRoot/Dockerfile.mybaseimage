@@ -1,0 +1,21 @@
+﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0
+
+# Configure rootless as https://github.com/dotnet/dotnet-docker/blob/5be37f32707bd3f0ff7605a71406c37e68975947/src/runtime-deps/8.0/jammy/amd64/Dockerfile
+ENV \
+    # UID of the non-root user 'app'
+    APP_UID=1654 \
+    # Configure web servers to bind to port 8080 when present
+    ASPNETCORE_HTTP_PORTS=8080 \
+    # Enable detection of running in a container
+    DOTNET_RUNNING_IN_CONTAINER=true
+RUN groupadd \
+        --gid=$APP_UID \
+        app \
+    && useradd -l \
+        --uid=$APP_UID \
+        --gid=$APP_UID \
+        --create-home \
+        app
+
+# But also default to rootless instead
+USER app
